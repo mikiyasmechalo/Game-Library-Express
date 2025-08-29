@@ -5,6 +5,7 @@ import {
   updatePublisher as updatePublisherDB,
   deletePublisher as deletePublisherDB,
 } from "../db/queries/publisherQueries.js";
+import { validator } from "./genreController.js";
 
 async function showAllPublishers(req, res) {
   const publishers = await getAllPublishers();
@@ -26,28 +27,46 @@ async function showPublisherDetails(req, res) {
   res.render("detail/publisherDetails", { publisher });
 }
 
-async function createPublisher(req, res) {
-  try {
-    const { name, description } = req.body;
-    await createPublisherDB(name, description);
-    res.redirect("/publishers");
-  } catch (error) {
-    console.error("Error creating publisher:", err);
-    res.render("error", { error });
-  }
-}
+const createPublisher = [
+  validator,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render("/publishers/create", {
+        errors: errors.array(),
+      });
+    }
+    try {
+      const { name, description } = req.body;
+      await createPublisherDB(name, description);
+      res.redirect("/publishers");
+    } catch (error) {
+      console.error("Error creating publisher:", err);
+      res.render("error", { error });
+    }
+  },
+];
 
-async function updatePublisher(req, res) {
-  try {
-    const { id } = req.params;
-    const { name, description } = req.body;
-    await updatePublisherDB(id, name, description);
-    res.redirect("/publishers");
-  } catch (error) {
-    console.error("Error updating publisher:", err);
-    res.render("error", { error });
-  }
-}
+const updatePublisher = [
+  validator,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render("/publishers/create", {
+        errors: errors.array(),
+      });
+    }
+    try {
+      const { id } = req.params;
+      const { name, description } = req.body;
+      await updatePublisherDB(id, name, description);
+      res.redirect("/publishers");
+    } catch (error) {
+      console.error("Error updating publisher:", err);
+      res.render("error", { error });
+    }
+  },
+];
 
 async function deletePublisher(req, res) {
   try {

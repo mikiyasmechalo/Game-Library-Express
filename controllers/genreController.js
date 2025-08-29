@@ -5,6 +5,21 @@ import {
   updateGenre as updateGenreDB,
   deleteGenre as deleteGenreDB,
 } from "../db/queries/genreQueries.js";
+import { body, validationResult } from "express-validator";
+
+export const validator = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Name is required")
+    .custom(async (name) => {
+      const genres = await getAllGenres();
+      genres.forEach((g) => {
+        if (g.name === name) throw Error("Duplicate Name Found.");
+      });
+    }),
+  body("description").trim().optional().escape(),
+];
 
 async function showAllGenres(req, res) {
   const genres = await getAllGenres();
@@ -17,16 +32,25 @@ async function showGenreDetails(req, res) {
   res.render("detail/genreDetails", { genre });
 }
 
-async function creategenre(req, res) {
-  try {
-    const { name, description } = req.body;
-    await createGenreDB(name, description);
-    res.redirect("/genres");
-  } catch (error) {
-    console.error("Error creating genre:", err);
-    res.render("error", { error });
-  }
-}
+const creategenre = [
+  validator,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render("/genres/create", {
+        errors: errors.array(),
+      });
+    }
+    try {
+      const { name, description } = req.body;
+      await createGenreDB(name, description);
+      res.redirect("/genres");
+    } catch (error) {
+      console.error("Error creating genre:", err);
+      res.render("error", { error });
+    }
+  },
+];
 
 export async function showCreateForm(req, res) {
   res.render("create", { creating: "genre" });
@@ -38,17 +62,21 @@ export async function showUpdateForm(req, res) {
   res.render("edit", { editing: "genre", genre: genre });
 }
 
-async function updateGenre(req, res) {
-  try {
-    const { id } = req.params;
-    const { name, description } = req.body;
-    await updateGenreDB(id, name, description);
-    res.redirect("/genres");
-  } catch (error) {
-    console.error("Error updating genre:", error);
-    res.render("error", { error });
-  }
-}
+const updateGenre = [
+  validator,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, description } = req.body;
+      await updateGenreDB(id, name, description);
+      res.redirect("/genres");
+    } catch (error) {
+      console.error("Error updating genre:", error);
+      res.render("error", { error });
+    }
+  },
+];
+
 async function deleteGenre(req, res) {
   try {
     const { id } = req.params;
