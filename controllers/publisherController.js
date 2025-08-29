@@ -23,7 +23,7 @@ export async function showUpdateForm(req, res) {
 async function showPublisherDetails(req, res) {
   const publisherId = req.params.id;
   const publisher = await getPublisherDetails(publisherId);
-  res.render("detail/publisherDetail", { publisher });
+  res.render("detail/publisherDetails", { publisher });
 }
 
 async function createPublisher(req, res) {

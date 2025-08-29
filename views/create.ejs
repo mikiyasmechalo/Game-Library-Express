@@ -54,6 +54,10 @@
                   <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                 </div>
                 <div class="mb-3">
+                  <label for="image" class="form-label">Image</label>
+                  <input type="text" class="form-control" id="image" name="image">
+                </div>
+                <div class="mb-3">
                   <label for="genres" class="form-label">Genres</label>
                   <select class="form-select" id="genres" name="genres" multiple required>
                     <% if (locals.genres) { %>

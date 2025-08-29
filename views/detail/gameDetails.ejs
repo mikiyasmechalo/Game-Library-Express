@@ -11,7 +11,7 @@
 
 <body class="bg-dark text-white p-5">
   <div class="container-fluid">
-    <a href="/" class="btn btn-info mb-4">Back to Inventory</a>
+    <a href="/" class="btn btn-info mb-4">Back to Game Library</a>
     <h1 class="text-center mb-4 text-info">
       <%= game.title %>
     </h1>
@@ -20,6 +20,8 @@
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <div class="card bg-secondary text-white">
+          <!-- Game Image -->
+          <img src="<%= game.image %>" class="card-img-top img-fluid mx-auto" alt="<%= game.title %> image" onerror="this.onerror=null;this.src='https://placehold.co/800x600/17a2b8/000000?text=No+Image+Found';" style="max-width: 800px; height: auto;">
           <div class="card-body">
             <h5 class="card-title">Description</h5>
             <p class="card-text">
@@ -65,7 +67,6 @@
           </form>
         </div>
       </div>
-
     </div>
   </div>
   <!-- Bootstrap Bundle with Popper -->

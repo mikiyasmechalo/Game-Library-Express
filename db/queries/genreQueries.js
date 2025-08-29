@@ -16,13 +16,13 @@ export async function getGenreDetails(id) {
       g.description,
       json_agg(
         jsonb_build_object(
-          'id', games.id,
-          'title', games.title
+          'id', game.id,
+          'title', game.title
         )
       ) AS games
     FROM genre AS g
     LEFT JOIN game_genres AS gg ON g.id = gg.genre_id
-    LEFT JOIN games ON gg.game_id = games.id
+    LEFT JOIN game ON gg.game_id = game.id
     WHERE g.id = ($1)
     GROUP BY g.id, g.name, g.description;
     `,

@@ -14,14 +14,21 @@ export async function showAllGames(req, res) {
 }
 
 export async function showCreateForm(req, res) {
-  const genres = await getAllGenres()
-  const publishers = await getAllPublishers()
-  res.render('create', {genres, publishers, creating: "game" })
+  const genres = await getAllGenres();
+  const publishers = await getAllPublishers();
+  res.render("create", { genres, publishers, creating: "game" });
 }
 
 async function createGame(req, res) {
-  const { title, release_date, rating, description, genres, publishers } =
-    req.body;
+  const {
+    title,
+    release_date,
+    rating,
+    description,
+    genres,
+    publishers,
+    image,
+  } = req.body;
 
   // The multiselect fields return a string or an array, so we need to ensure they are arrays
   const genresArray = Array.isArray(genres) ? genres : [genres];
@@ -34,6 +41,7 @@ async function createGame(req, res) {
     description,
     genres: genresArray,
     publishers: publishersArray,
+    image,
   };
   try {
     await createGameDB(gameData);
@@ -48,7 +56,7 @@ async function createGame(req, res) {
 export async function showGameDetails(req, res) {
   const gameId = req.params.id;
   const game = await getGameDetails(gameId);
-  res.render("detail/gameDetail", { game });
+  res.render("detail/gameDetails", { game });
 }
 
 export async function showUpdateForm(req, res) {
@@ -62,7 +70,7 @@ export async function showUpdateForm(req, res) {
       game,
       genres,
       publishers,
-      editing: "game"
+      editing: "game",
     });
   } catch (err) {
     res.render("error", { error: err.message });
@@ -70,8 +78,15 @@ export async function showUpdateForm(req, res) {
 }
 
 async function updateGame(req, res) {
-  const { title, release_date, rating, description, genres, publishers } =
-    req.body;
+  const {
+    title,
+    release_date,
+    rating,
+    description,
+    genres,
+    publishers,
+    image,
+  } = req.body;
   const { id } = req.params;
 
   // The multiselect fields return a string or an array, so we need to ensure they are arrays
@@ -85,6 +100,7 @@ async function updateGame(req, res) {
     description,
     genres: genresArray,
     publishers: publishersArray,
+    image,
   };
   try {
     await updateGameDB(id, gameData);
@@ -95,7 +111,7 @@ async function updateGame(req, res) {
 }
 
 async function deleteGame(req, res) {
-  const id = req.params.id
+  const id = req.params.id;
   try {
     await deleteGameDB(id);
     res.redirect("/");

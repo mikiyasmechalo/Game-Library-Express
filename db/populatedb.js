@@ -37,18 +37,19 @@ async function main() {
     `);
 
     await client.query(`
-      CREATE TABLE IF NOT EXISTS games (
+      CREATE TABLE IF NOT EXISTS game (
         id SERIAL PRIMARY KEY,
         title VARCHAR(255) UNIQUE NOT NULL,
         release_date DATE NOT NULL,
         rating INTEGER CHECK (rating >= 1 AND rating <= 5),
-        description TEXT
+        description TEXT,
+        image VARCHAR(255)
       );
     `);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS game_genres (
-        game_id INTEGER REFERENCES games(id) ON DELETE CASCADE,
+        game_id INTEGER REFERENCES game(id) ON DELETE CASCADE,
         genre_id INTEGER REFERENCES genre(id) ON DELETE CASCADE,
         PRIMARY KEY (game_id, genre_id)
       );
@@ -56,7 +57,7 @@ async function main() {
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS game_publishers (
-        game_id INTEGER REFERENCES games(id) ON DELETE CASCADE,
+        game_id INTEGER REFERENCES game(id) ON DELETE CASCADE,
         publisher_id INTEGER REFERENCES publisher(id) ON DELETE CASCADE,
         PRIMARY KEY (game_id, publisher_id)
       );
@@ -101,7 +102,8 @@ async function main() {
         rating: 5,
         description: 'A spectacular reimagining of the classic RPG, featuring a new combat system and expanded storyline.',
         genres: ['RPG', 'Action-Adventure'],
-        publishers: ['Square Enix', 'Capcom']
+        publishers: ['Square Enix', 'Capcom'],
+        image: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/FFVIIRemake.png/250px-FFVIIRemake.png'
       },
       {
         title: 'Resident Evil 2',
@@ -109,7 +111,8 @@ async function main() {
         rating: 5,
         description: 'A remake of the 1998 classic, offering a tense and atmospheric survival horror experience.',
         genres: ['Survival Horror'],
-        publishers: ['Capcom']
+        publishers: ['Capcom'],
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEjoB4gN-SknL6K5bIgs6eD1lcEGT3vKdI5w&s'
       },
       {
         title: 'The Legend of Zelda: Breath of the Wild',
@@ -117,7 +120,8 @@ async function main() {
         rating: 5,
         description: 'An expansive open-world adventure game that redefined the Zelda franchise.',
         genres: ['Action-Adventure', 'RPG'],
-        publishers: ['Nintendo']
+        publishers: ['Nintendo'],
+        image: 'https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg'
       },
       {
         title: 'Grand Theft Auto V',
@@ -125,7 +129,8 @@ async function main() {
         rating: 5,
         description: 'An action-adventure game played from either a third-person or first-person perspective.',
         genres: ['Action-Adventure'],
-        publishers: ['Rockstar Games']
+        publishers: ['Rockstar Games'],
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbVr1vGxGOIh9p3TaRNbiGifcHY8-VDH7dw&s'
       },
       {
         title: 'Cyberpunk 2077',
@@ -133,7 +138,8 @@ async function main() {
         rating: 4,
         description: 'An open-world, action-adventure story set in Night City, a megalopolis obsessed with power, glamour and body modification.',
         genres: ['RPG', 'Action-Adventure'],
-        publishers: ['CD Projekt']
+        publishers: ['CD Projekt'],
+        image: 'https://images.igdb.com/igdb/image/upload/t_1080p/co1rft.jpg'
       },
       {
         title: 'The Witcher 3: Wild Hunt',
@@ -141,14 +147,15 @@ async function main() {
         rating: 5,
         description: 'A story-driven open world RPG set in a visually stunning fantasy universe full of meaningful choices and impactful consequences.',
         genres: ['RPG', 'Action-Adventure'],
-        publishers: ['CD Projekt']
+        publishers: ['CD Projekt'],
+        image: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Witcher_3_cover_art.jpg'
       },
     ];
 
     for (const game of games) {
       const gameResult = await client.query(
-        `INSERT INTO game(title, release_date, rating, description) VALUES($1, $2, $3, $4) ON CONFLICT (title) DO NOTHING RETURNING id`,
-        [game.title, game.release_date, game.rating, game.description]
+        `INSERT INTO game(title, release_date, rating, description, image) VALUES($1, $2, $3, $4, $5w) ON CONFLICT (title) DO NOTHING RETURNING id`,
+        [game.title, game.release_date, game.rating, game.description, game.image]
       );
 
       let gameId = null;
@@ -183,7 +190,7 @@ async function main() {
         }
       }
     }
-    console.log('Games, genres, and publishers successfully associated.');
+    console.log('Game, genres, and publishers successfully associated.');
 
     await client.query('COMMIT');
     console.log('Transaction committed successfully.');

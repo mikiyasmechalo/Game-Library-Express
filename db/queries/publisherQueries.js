@@ -17,13 +17,13 @@ export async function getPublisherDetails(id) {
       p.description,
       json_agg(
         jsonb_build_object(
-          'id', games.id,
-          'title', games.title
+          'id', game.id,
+          'title', game.title
         )
       ) AS games
     FROM publisher AS p
     LEFT JOIN game_publishers AS gp ON p.id = gp.publisher_id
-    LEFT JOIN games ON gp.game_id = games.id
+    LEFT JOIN game ON gp.game_id = game.id
     WHERE p.id = ($1)
     GROUP BY p.id, p.name, p.description;
     `,

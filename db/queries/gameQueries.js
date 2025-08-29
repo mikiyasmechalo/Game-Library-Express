@@ -8,6 +8,7 @@ export async function getAllGames() {
         g.release_date,
         g.rating,
         g.description,
+        g.image,
         json_agg(
           DISTINCT jsonb_build_object(
             'id', ge.id,
@@ -42,6 +43,7 @@ export async function getGameDetails(id) {
     g.release_date,
     g.rating,
     g.description,
+    g.image,
         json_agg(
           DISTINCT jsonb_build_object(
             'id', ge.id,
@@ -75,8 +77,8 @@ export async function createGame(gameData) {
     await client.query("BEGIN");
 
     const gameInsertSql = `
-      INSERT INTO game(title, release_date, rating, description)
-      VALUES($1, $2, $3, $4)
+      INSERT INTO game(title, release_date, rating, description, image)
+      VALUES($1, $2, $3, $4, $5)
       RETURNING id
     `;
     const gameResult = await client.query(gameInsertSql, [
@@ -84,6 +86,7 @@ export async function createGame(gameData) {
       gameData.release_date,
       gameData.rating,
       gameData.description,
+      gameData.image
     ]);
     const gameId = gameResult.rows[0].id;
 
@@ -119,7 +122,7 @@ export async function createGame(gameData) {
 }
 
 export async function updateGame(id, gameData) {
-  const { title, release_date, rating, description, genres, publishers } =
+  const { title, release_date, rating, description, genres, publishers, image } =
     gameData;
   const client = await pool.connect();
 
@@ -128,15 +131,16 @@ export async function updateGame(id, gameData) {
 
     // 1. Update the main games table
     const updateGameQuery = `
-      UPDATE games
-      SET title = $1, release_date = $2, rating = $3, description = $4
-      WHERE id = $5
+      UPDATE game
+      SET title = $1, release_date = $2, rating = $3, description = $4, image = $5
+      WHERE id = $6
     `;
     await client.query(updateGameQuery, [
       title,
       release_date,
       rating,
       description,
+      image,
       id,
     ]);
 
