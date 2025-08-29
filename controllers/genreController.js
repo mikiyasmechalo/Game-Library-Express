@@ -3,7 +3,7 @@ import {
   getAllGenres,
   createGenre as createGenreDB,
   updateGenre as updateGenreDB,
-  deleteGenre as deleteGenreDB
+  deleteGenre as deleteGenreDB,
 } from "../db/queries/genreQueries.js";
 
 async function showAllGenres(req, res) {
@@ -21,7 +21,7 @@ async function creategenre(req, res) {
   try {
     const { name, description } = req.body;
     await createGenreDB(name, description);
-    res.redirect("/genre");
+    res.redirect("/genres");
   } catch (error) {
     console.error("Error creating genre:", err);
     res.render("error", { error });
@@ -43,7 +43,7 @@ async function updateGenre(req, res) {
     const { id } = req.params;
     const { name, description } = req.body;
     await updateGenreDB(id, name, description);
-    res.redirect("/genre");
+    res.redirect("/genres");
   } catch (error) {
     console.error("Error updating genre:", error);
     res.render("error", { error });
@@ -53,7 +53,7 @@ async function deleteGenre(req, res) {
   try {
     const { id } = req.params;
     await deleteGenreDB(id);
-    res.redirect("/genre");
+    res.redirect("/genres");
   } catch (error) {
     console.error("Error deleting genre:", error);
     res.render("error", { error });

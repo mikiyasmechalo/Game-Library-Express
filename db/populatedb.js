@@ -147,7 +147,7 @@ async function main() {
 
     for (const game of games) {
       const gameResult = await client.query(
-        `INSERT INTO games(title, release_date, rating, description) VALUES($1, $2, $3, $4) ON CONFLICT (title) DO NOTHING RETURNING id`,
+        `INSERT INTO game(title, release_date, rating, description) VALUES($1, $2, $3, $4) ON CONFLICT (title) DO NOTHING RETURNING id`,
         [game.title, game.release_date, game.rating, game.description]
       );
 
@@ -155,7 +155,7 @@ async function main() {
       if (gameResult.rows.length > 0) {
         gameId = gameResult.rows[0].id;
       } else {
-        const existingGameResult = await client.query('SELECT id FROM games WHERE title = $1', [game.title]);
+        const existingGameResult = await client.query('SELECT id FROM game WHERE title = $1', [game.title]);
         gameId = existingGameResult.rows[0].id;
       }
 

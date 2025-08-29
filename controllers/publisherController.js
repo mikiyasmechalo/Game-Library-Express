@@ -30,7 +30,7 @@ async function createPublisher(req, res) {
   try {
     const { name, description } = req.body;
     await createPublisherDB(name, description);
-    res.redirect("/publisher");
+    res.redirect("/publishers");
   } catch (error) {
     console.error("Error creating publisher:", err);
     res.render("error", { error });
@@ -42,7 +42,7 @@ async function updatePublisher(req, res) {
     const { id } = req.params;
     const { name, description } = req.body;
     await updatePublisherDB(id, name, description);
-    res.redirect("/publisher");
+    res.redirect("/publishers");
   } catch (error) {
     console.error("Error updating publisher:", err);
     res.render("error", { error });
@@ -53,7 +53,7 @@ async function deletePublisher(req, res) {
   try {
     const { id } = req.params;
     await deletePublisherDB(id);
-    res.redirect("/publisher");
+    res.redirect("/publishers");
   } catch (error) {
     console.error("Error deleting publisher:", err);
     res.render("error", { error });

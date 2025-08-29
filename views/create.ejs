@@ -19,12 +19,12 @@
   <div class="container-fluid">
     <div class="d-flex justify-content-center mb-5">
       <div class="btn-group" role="group" aria-label="Form navigation">
-        <a href="/game/create"
+        <a href="/games/create"
           class="btn btn-outline-info rounded-start-pill <%= locals.creating === 'game' ? 'active' : '' %>">Add New
           Game</a>
-        <a href="/genre/create" class="btn btn-outline-info <%= locals.creating === 'genre' ? 'active' : '' %>">Add New
+        <a href="/genres/create" class="btn btn-outline-info <%= locals.creating === 'genre' ? 'active' : '' %>">Add New
           Genre</a>
-        <a href="/publisher/create"
+        <a href="/publishers/create"
           class="btn btn-outline-info rounded-end-pill <%= locals.creating === 'publisher' ? 'active' : '' %>">Add New
           Publisher</a>
       </div>
@@ -36,7 +36,7 @@
           <div class="card bg-secondary text-white">
             <div class="card-body">
               <h5 class="card-title text-center">Add New Game</h5>
-              <form action="/game/create" method="post">
+              <form action="/games/create" method="post">
                 <div class="mb-3">
                   <label for="title" class="form-label">Title</label>
                   <input type="text" class="form-control" id="title" name="title" required>
@@ -89,7 +89,7 @@
               <div class="card bg-secondary text-white">
                 <div class="card-body">
                   <h5 class="card-title text-center">Add New Genre</h5>
-                  <form action="/genre/create" method="post">
+                  <form action="/genres/create" method="post">
                     <div class="mb-3">
                       <label for="genre_name" class="form-label">Genre Name</label>
                       <input type="text" class="form-control" id="genre_name" name="name" required>
@@ -109,7 +109,7 @@
                   <div class="card bg-secondary text-white">
                     <div class="card-body">
                       <h5 class="card-title text-center">Add New Publisher</h5>
-                      <form action="/publisher/create" method="post">
+                      <form action="/publishers/create" method="post">
                         <div class="mb-3">
                           <label for="publisher_name" class="form-label">Publisher Name</label>
                           <input type="text" class="form-control" id="publisher_name" name="name" required>

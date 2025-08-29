@@ -22,7 +22,7 @@ export async function getAllGames() {
             'description', p.description
           )
         ) AS publishers
-    FROM games AS g
+    FROM game AS g
     LEFT JOIN game_genres AS gg ON g.id = gg.game_id
     LEFT JOIN genre AS ge ON gg.genre_id = ge.id
     LEFT JOIN game_publishers AS gp ON g.id = gp.game_id
@@ -56,7 +56,7 @@ export async function getGameDetails(id) {
             'description', p.description
           )
         ) AS publishers
-    FROM games AS g
+    FROM game AS g
     LEFT JOIN game_genres AS gg ON g.id = gg.game_id
     LEFT JOIN genre AS ge ON gg.genre_id = ge.id
     LEFT JOIN game_publishers AS gp ON g.id = gp.game_id
@@ -75,7 +75,7 @@ export async function createGame(gameData) {
     await client.query("BEGIN");
 
     const gameInsertSql = `
-      INSERT INTO games(title, release_date, rating, description)
+      INSERT INTO game(title, release_date, rating, description)
       VALUES($1, $2, $3, $4)
       RETURNING id
     `;
@@ -180,7 +180,7 @@ export async function updateGame(id, gameData) {
 export async function deleteGame(id) {
   try {
     const query = `
-      DELETE FROM games
+      DELETE FROM game
       WHERE id = $1;
     `;
     const result = await pool.query(query, [id]);
