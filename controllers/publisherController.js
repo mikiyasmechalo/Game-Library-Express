@@ -6,6 +6,7 @@ import {
   deletePublisher as deletePublisherDB,
 } from "../db/queries/publisherQueries.js";
 import { validator } from "./genreController.js";
+import { validationResult } from "express-validator";
 
 async function showAllPublishers(req, res) {
   const publishers = await getAllPublishers();
