@@ -1,23 +1,26 @@
-import pg from 'pg';
-import 'dotenv/config';
+import pg from "pg";
+import "dotenv/config";
 
 const { Pool } = pg;
 const connectionString = process.env.DB_URL;
 
 if (!connectionString) {
-  throw new Error('No DB_URL environment variable set.');
+  throw new Error("No DB_URL environment variable set.");
 }
 
 const pool = new Pool({
   connectionString,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 async function main() {
   const client = await pool.connect();
 
   try {
-    console.log('Starting transaction...');
-    await client.query('BEGIN');
+    console.log("Starting transaction...");
+    await client.query("BEGIN");
 
     // Create tables
     await client.query(`
@@ -62,13 +65,25 @@ async function main() {
         PRIMARY KEY (game_id, publisher_id)
       );
     `);
-    console.log('Tables created successfully.');
+    console.log("Tables created successfully.");
 
     // Populate genres
     const genres = [
-      { name: 'Action-Adventure', description: 'Games that combine action gameplay with an ongoing storyline and exploration.' },
-      { name: 'RPG', description: 'Games where players assume the roles of characters in a fictional setting.' },
-      { name: 'Survival Horror', description: 'A subgenre of action-adventure games that focuses on survival elements in a horror setting.' },
+      {
+        name: "Action-Adventure",
+        description:
+          "Games that combine action gameplay with an ongoing storyline and exploration.",
+      },
+      {
+        name: "RPG",
+        description:
+          "Games where players assume the roles of characters in a fictional setting.",
+      },
+      {
+        name: "Survival Horror",
+        description:
+          "A subgenre of action-adventure games that focuses on survival elements in a horror setting.",
+      },
     ];
     for (const genre of genres) {
       await client.query(
@@ -76,15 +91,31 @@ async function main() {
         [genre.name, genre.description]
       );
     }
-    console.log('Genres populated.');
+    console.log("Genres populated.");
 
     // Populate publishers
     const publishers = [
-      { name: 'Capcom', description: 'A Japanese video game developer and publisher.' },
-      { name: 'Square Enix', description: 'A Japanese entertainment conglomerate and video game company.' },
-      { name: 'Rockstar Games', description: 'An American video game publisher.' },
-      { name: 'Nintendo', description: 'A Japanese multinational video game company.'},
-      { name: 'CD Projekt', description: 'A Polish video game developer and publisher.'},
+      {
+        name: "Capcom",
+        description: "A Japanese video game developer and publisher.",
+      },
+      {
+        name: "Square Enix",
+        description:
+          "A Japanese entertainment conglomerate and video game company.",
+      },
+      {
+        name: "Rockstar Games",
+        description: "An American video game publisher.",
+      },
+      {
+        name: "Nintendo",
+        description: "A Japanese multinational video game company.",
+      },
+      {
+        name: "CD Projekt",
+        description: "A Polish video game developer and publisher.",
+      },
     ];
     for (const publisher of publishers) {
       await client.query(
@@ -92,83 +123,106 @@ async function main() {
         [publisher.name, publisher.description]
       );
     }
-    console.log('Publishers populated.');
+    console.log("Publishers populated.");
 
     // Populate games
     const games = [
       {
-        title: 'Final Fantasy VII Remake',
-        release_date: '2020-04-10',
+        title: "Final Fantasy VII Remake",
+        release_date: "2020-04-10",
         rating: 5,
-        description: 'A spectacular reimagining of the classic RPG, featuring a new combat system and expanded storyline.',
-        genres: ['RPG', 'Action-Adventure'],
-        publishers: ['Square Enix', 'Capcom'],
-        image: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/FFVIIRemake.png/250px-FFVIIRemake.png'
+        description:
+          "A spectacular reimagining of the classic RPG, featuring a new combat system and expanded storyline.",
+        genres: ["RPG", "Action-Adventure"],
+        publishers: ["Square Enix", "Capcom"],
+        image:
+          "https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/FFVIIRemake.png/250px-FFVIIRemake.png",
       },
       {
-        title: 'Resident Evil 2',
-        release_date: '2019-01-25',
+        title: "Resident Evil 2",
+        release_date: "2019-01-25",
         rating: 5,
-        description: 'A remake of the 1998 classic, offering a tense and atmospheric survival horror experience.',
-        genres: ['Survival Horror'],
-        publishers: ['Capcom'],
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEjoB4gN-SknL6K5bIgs6eD1lcEGT3vKdI5w&s'
+        description:
+          "A remake of the 1998 classic, offering a tense and atmospheric survival horror experience.",
+        genres: ["Survival Horror"],
+        publishers: ["Capcom"],
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEjoB4gN-SknL6K5bIgs6eD1lcEGT3vKdI5w&s",
       },
       {
-        title: 'The Legend of Zelda: Breath of the Wild',
-        release_date: '2017-03-03',
+        title: "The Legend of Zelda: Breath of the Wild",
+        release_date: "2017-03-03",
         rating: 5,
-        description: 'An expansive open-world adventure game that redefined the Zelda franchise.',
-        genres: ['Action-Adventure', 'RPG'],
-        publishers: ['Nintendo'],
-        image: 'https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg'
+        description:
+          "An expansive open-world adventure game that redefined the Zelda franchise.",
+        genres: ["Action-Adventure", "RPG"],
+        publishers: ["Nintendo"],
+        image:
+          "https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg",
       },
       {
-        title: 'Grand Theft Auto V',
-        release_date: '2013-09-17',
+        title: "Grand Theft Auto V",
+        release_date: "2013-09-17",
         rating: 5,
-        description: 'An action-adventure game played from either a third-person or first-person perspective.',
-        genres: ['Action-Adventure'],
-        publishers: ['Rockstar Games'],
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbVr1vGxGOIh9p3TaRNbiGifcHY8-VDH7dw&s'
+        description:
+          "An action-adventure game played from either a third-person or first-person perspective.",
+        genres: ["Action-Adventure"],
+        publishers: ["Rockstar Games"],
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbVr1vGxGOIh9p3TaRNbiGifcHY8-VDH7dw&s",
       },
       {
-        title: 'Cyberpunk 2077',
-        release_date: '2020-12-10',
+        title: "Cyberpunk 2077",
+        release_date: "2020-12-10",
         rating: 4,
-        description: 'An open-world, action-adventure story set in Night City, a megalopolis obsessed with power, glamour and body modification.',
-        genres: ['RPG', 'Action-Adventure'],
-        publishers: ['CD Projekt'],
-        image: 'https://images.igdb.com/igdb/image/upload/t_1080p/co1rft.jpg'
+        description:
+          "An open-world, action-adventure story set in Night City, a megalopolis obsessed with power, glamour and body modification.",
+        genres: ["RPG", "Action-Adventure"],
+        publishers: ["CD Projekt"],
+        image: "https://images.igdb.com/igdb/image/upload/t_1080p/co1rft.jpg",
       },
       {
-        title: 'The Witcher 3: Wild Hunt',
-        release_date: '2015-05-19',
+        title: "The Witcher 3: Wild Hunt",
+        release_date: "2015-05-19",
         rating: 5,
-        description: 'A story-driven open world RPG set in a visually stunning fantasy universe full of meaningful choices and impactful consequences.',
-        genres: ['RPG', 'Action-Adventure'],
-        publishers: ['CD Projekt'],
-        image: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Witcher_3_cover_art.jpg'
+        description:
+          "A story-driven open world RPG set in a visually stunning fantasy universe full of meaningful choices and impactful consequences.",
+        genres: ["RPG", "Action-Adventure"],
+        publishers: ["CD Projekt"],
+        image:
+          "https://upload.wikimedia.org/wikipedia/en/0/0c/Witcher_3_cover_art.jpg",
       },
     ];
 
     for (const game of games) {
       const gameResult = await client.query(
-        `INSERT INTO game(title, release_date, rating, description, image) VALUES($1, $2, $3, $4, $5w) ON CONFLICT (title) DO NOTHING RETURNING id`,
-        [game.title, game.release_date, game.rating, game.description, game.image]
+        `INSERT INTO game(title, release_date, rating, description, image) VALUES($1, $2, $3, $4, $5) ON CONFLICT (title) DO NOTHING RETURNING id`,
+        [
+          game.title,
+          game.release_date,
+          game.rating,
+          game.description,
+          game.image,
+        ]
       );
 
       let gameId = null;
       if (gameResult.rows.length > 0) {
         gameId = gameResult.rows[0].id;
       } else {
-        const existingGameResult = await client.query('SELECT id FROM game WHERE title = $1', [game.title]);
+        const existingGameResult = await client.query(
+          "SELECT id FROM game WHERE title = $1",
+          [game.title]
+        );
         gameId = existingGameResult.rows[0].id;
       }
 
       // Populate game_genres
       for (const genreName of game.genres) {
-        const genreResult = await client.query('SELECT id FROM genre WHERE name = $1', [genreName]);
+        const genreResult = await client.query(
+          "SELECT id FROM genre WHERE name = $1",
+          [genreName]
+        );
         if (genreResult.rows.length > 0) {
           const genreId = genreResult.rows[0].id;
           await client.query(
@@ -180,7 +234,10 @@ async function main() {
 
       // Populate game_publishers
       for (const publisherName of game.publishers) {
-        const publisherResult = await client.query('SELECT id FROM publisher WHERE name = $1', [publisherName]);
+        const publisherResult = await client.query(
+          "SELECT id FROM publisher WHERE name = $1",
+          [publisherName]
+        );
         if (publisherResult.rows.length > 0) {
           const publisherId = publisherResult.rows[0].id;
           await client.query(
@@ -190,13 +247,13 @@ async function main() {
         }
       }
     }
-    console.log('Game, genres, and publishers successfully associated.');
+    console.log("Game, genres, and publishers successfully associated.");
 
-    await client.query('COMMIT');
-    console.log('Transaction committed successfully.');
+    await client.query("COMMIT");
+    console.log("Transaction committed successfully.");
   } catch (err) {
-    await client.query('ROLLBACK');
-    console.error('Transaction rolled back due to error:', err.message);
+    await client.query("ROLLBACK");
+    console.error("Transaction rolled back due to error:", err.message);
   } finally {
     client.release();
     pool.end();
